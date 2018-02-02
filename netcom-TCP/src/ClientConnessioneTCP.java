@@ -6,9 +6,11 @@
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.net.ConnectException;
@@ -28,28 +30,25 @@ public class ClientConnessioneTCP {
         String serverAddress = "localhost";
         //porta del server in ascolto
         int port = 2000;
+                
 
         //apertura della connessione al server sulla porta specificata
         try{
             connection = new Socket(serverAddress, port);
             System.out.println("Connessione aperta");
             BufferedReader tastiera= new BufferedReader(new InputStreamReader(System.in));
-            Socket mioSocket= new Socket(serverAddress,port);
-            DataOutputStream outVersoServer= new DataOutputStream(mioSocket.getOutputStream());
-            BufferedReader inDalServer= new BufferedReader(new InputStreamReader(mioSocket.getInputStream()));
+            BufferedWriter outVersoServer= new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+            BufferedReader inDalServer= new BufferedReader(new InputStreamReader(connection.getInputStream()));
             
             System.out.println("inserisci la stringa da inviare \n");
             String stringaUtente=tastiera.readLine();
             //spedisco al server
             System.out.println("invio la stringa e attendo \n");
-            outVersoServer.writeBytes(stringaUtente +"\n");
-            //leggo la risposta del server 
-            String stringaRicevutaDalServer= inDalServer.readLine();
-            System.out.println("risposta dal server..."+"\n"+stringaRicevutaDalServer);
+            outVersoServer.write(stringaUtente );
+            outVersoServer.newLine();
+            outVersoServer.flush();
             //chiudo la connessione
             System.out.println("termine elaborazione e chiusura connessione");
-            mioSocket.close();
-            
             
         }
         catch(ConnectException e){

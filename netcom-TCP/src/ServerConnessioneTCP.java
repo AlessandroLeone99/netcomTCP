@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Connection;
+
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -35,7 +38,7 @@ public class ServerConnessioneTCP {
         String stringaModificata=null;
         
         BufferedReader inDalClient = null;
-        DataOutputStream outVersoClient = null;
+        PrintWriter outVersoClient = null;
 
         while(true){
             try{
@@ -44,12 +47,13 @@ public class ServerConnessioneTCP {
                 System.out.println("In attesa di connessioni!");
                 //si è stabilita la connessione
                 client = sSocket.accept();
+                
                 System.out.println("Connessione stabilita!");
                 System.out.println("Socket server: " + client.getLocalSocketAddress());
                 System.out.println("Socket client: " + client.getRemoteSocketAddress());
                 
                 inDalClient= new BufferedReader(new InputStreamReader(client.getInputStream()));
-                outVersoClient=new DataOutputStream(client.getOutputStream());
+                outVersoClient=new PrintWriter(client.getOutputStream());
                 
             }
                catch(IOException e){
@@ -69,13 +73,14 @@ public class ServerConnessioneTCP {
             }
             
            
-            System.out.println("scrivi qualcosa");
-            stringaRicevuta= inDalClient.readLine();
-            System.out.println("ricevuta la stringa dal client"+stringaRicevuta);
+            while(true){
+              if((stringaRicevuta=inDalClient.readLine())!= null){
+                  System.out.println("ricevuta la stringa dal client: "+stringaRicevuta);
+                  break;
+              }
+  
+            }
             
-            //la modifico e la rispedisco al client
-            System.out.println("invio la stringa modificata...");
-            outVersoClient.writeBytes(stringaModificata+"\n");
             
             //termina elaborazione sul server: chiudo la connessione
             System.out.println("Connessione chiusa!");
